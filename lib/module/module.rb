@@ -1,4 +1,5 @@
 require_relative 'interaction'
+require_relative '../storage/redis'
 
 module MyModule
   include Interaction
@@ -10,17 +11,19 @@ module MyModule
   module ClassMethods
 
     def service_name(*name)
-      File.open('expose_methods.txt', 'a') { |f| 
-        f.write("\n")
-        f.write(name.map(&:to_s).join(" ")) }
+      @arr = []
+      @arr << name
     end
 
     def expose(*meth)
-      File.open('expose_methods.txt', 'a') do |f|
-        f.write(" ")
-        f.write(meth.map(&:to_s).join(" "))
-        f.write(" ")
-      end
+      @arr << meth
+      data
+    end
+
+    def data
+      key   = @arr[0][0].to_s
+      value = { class: @arr[0][1].to_s, methods: @arr[1].map(&:to_s) }
+      Storage.new.insert(key, value)
     end
   end
 end

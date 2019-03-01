@@ -4,7 +4,7 @@ class First
   include MyModule
 
   service_name :test_service, self
-  #expose :triggered
+  expose :triggered
 
   def intialize
    MyModule.broadcast(:started, "testdata")   
