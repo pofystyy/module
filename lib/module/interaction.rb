@@ -1,11 +1,14 @@
 require_relative '../storage/redis'
+require_relative 'connect_to_db'
 
- module Interaction
+module Interaction
     def self.included(base)
       base.extend(InteractionClass)
     end
 
     module InteractionClass
+      include ConnectToDb
+      
       def call(name, data)
         p "call -- name: #{name}, data: #{data}"
       end
@@ -21,7 +24,7 @@ require_relative '../storage/redis'
       def trigger(address, data)
         service_name, meth = address.split(/\./)
 
-        hsh = Storage.new.find(service_name)
+        hsh = storage.find(service_name)
   
         clazz = hsh['class']
         methods = hsh['methods']

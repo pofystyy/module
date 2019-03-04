@@ -1,13 +1,13 @@
-require_relative 'module/module'
+require_relative 'module/lightning_module'
 
 class First
-  include MyModule
+  include LightningModule
 
   service_name :test_service, self
-  expose :triggered
+  expose #:triggered
 
   def intialize
-   MyModule.broadcast(:started, "testdata")   
+   LightningModule.broadcast(:started, "testdata")   
   end
 
   def triggered(name)
@@ -15,6 +15,6 @@ class First
   end
 
   def trigger_test_service
-    MyModule.trigger("test_second_service.test_response", "data")
+    LightningModule.trigger("test_second_service.test_response", "data")
   end  
 end

@@ -1,16 +1,18 @@
 require 'redis'
 require 'json'
 
-class Storage
-  def initialize
-    @db = Redis.new
-  end
+module Storage
+  class Redis
+    def self.db
+      ::Redis.new
+    end
+    
+    def self.insert(key, value)
+      db.set(key, value.to_json) 
+    end
 
-  def insert(key, value)
-    @db.set(key, value.to_json) 
-  end
-
-  def find(key)
-    JSON.parse @db.get(key)
+    def self.find(key)
+      JSON.parse db.get(key)
+    end
   end
 end
