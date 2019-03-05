@@ -11,7 +11,7 @@ class Second
   end
 
   def trigger_test_service
-   LightningModule.trigger("test_service.triggered", "data")
+    trigger("test_service.triggered", "data")
   end
 
   on "test_service:started": :test_response

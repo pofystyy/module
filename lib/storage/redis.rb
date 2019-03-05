@@ -1,25 +1,29 @@
+require 'singleton'
 require 'redis'
 require 'json'
 
 module Storage
   class Redis
+    include Singleton
 
-    @@db = ::Redis.new
+    def initialize
+      @db = ::Redis.new
+    end
     
-    def self.insert(key, value)
-      @@db.set(key, value.to_json) 
+    def insert(key, value)
+      @db.set(key, value.to_json) 
     end
 
-    def self.find(key)
-      JSON.parse @@db.get(key)
+    def find(key)
+      JSON.parse @db.get(key)
     end
 
-    # def self.add(global_key, key, value)
-    #   @@db.hmset(global_key, value, key)     
-    # end
+    def add(global_key, key, value)
+      @db.hmset(global_key, key, value)     
+    end
 
-    # def self.find_where(global_key, finding_key)
-    #   @@db.hget(global_key, finding_key)      
-    # end
+    def find_where(global_key, finding_key)
+      @db.hget(global_key, finding_key)      
+    end
   end
 end

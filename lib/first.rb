@@ -7,8 +7,7 @@ class First
   expose :triggered
 
   def initialize
-    LightningModule.broadcast(:started, "testdata")
-    # LightningModule.broadcast(:end, "22222222")
+    broadcast(:started, "testdata")
   end
 
   def triggered(name)
@@ -16,6 +15,6 @@ class First
   end
 
   def trigger_test_service
-    LightningModule.trigger("test_second_service.test_response", "my data")
+    trigger("test_second_service.test_response", "my data")
   end  
 end
