@@ -1,6 +1,12 @@
 require_relative 'connect_to_db'
+require_relative 'exceptions'
 
 module ClassMethods
+  class Exceptions
+    class BaseServiceExceptions < LightningModule::Exceptions::BaseException; end
+    class ServiceNameFailure < BaseServiceExceptions; end
+
+  end
     include ConnectToDb
 
     def service_name(name)
