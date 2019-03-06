@@ -1,18 +1,18 @@
-require_relative 'module/module'
+require_relative 'module/lightning_module'
 
 class Second
-  include MyModule
+  include LightningModule
 
-  service_name :test_second_service, self
   expose :test_response
-
-  #on "test_service:started": :test_response
+  service_name #:test_second_service
 
   def test_response(data)
    p "Second: #{data}"
   end
 
   def trigger_test_service
-   MyModule.trigger("test_service.triggered", "data")
+    trigger("test_service.triggered", "data")
   end
+
+  on "test_service:started": :test_response
 end
