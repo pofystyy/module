@@ -11,7 +11,7 @@ module Storage
     end
 
     def insert(key, *value)
-      @db.hmset(key, value.each { |v| v } )    
+      @db.hmset(key, value.each { |v| v })    
     end
 
     def find(global_key, finding_key)  
