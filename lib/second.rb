@@ -5,8 +5,8 @@ class Second
   # include LightningModule
   include RabbitModule
 
-  # expose :test_response
-  # service_name :test_second_service
+  expose :test_response
+  service_name :test_second_service
 
   def test_response(data)
    p "Second: #{data}"

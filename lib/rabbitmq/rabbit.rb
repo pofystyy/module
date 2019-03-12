@@ -20,9 +20,14 @@ module RabbitModule
 
   module ClassMethods
     def service_name(name)
-      @service_data = {}
+      check_service_data
       @service_data[:service_name] = name.to_s
       @service_data[:class] = self
+    end
+
+    def expose(*meth)
+      check_service_data
+      @service_data[:methods] = meth
     end
 
     def current_service_name
@@ -42,9 +47,15 @@ module RabbitModule
       queue = channel.queue("#{@service_name}_#{@event_name}", :auto_delete => true)
       queue.subscribe do |delivery_info, metadata, payload|
         event_name, event_data = payload.split
-        self.new.send(@method, event_data)
+        self.new.send(@method, event_data) if @service_data[:methods].to_s.include? @method
       end
       connection.close
+    end
+
+    private
+
+    def check_service_data
+      @service_data = {} if @service_data.nil? 
     end
   end
 end

@@ -6,7 +6,7 @@ class First
   include RabbitModule
 
   service_name :test_service
-  # expose :triggered
+  expose :triggered
 
   def initialize
     broadcast(:started, "testdata")
