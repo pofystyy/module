@@ -1,10 +1,12 @@
 require_relative 'module/lightning_module'
+require_relative 'rabbitmq/rabbit'
 
 class Second
-  include LightningModule
+  # include LightningModule
+  include RabbitModule
 
-  expose :test_response
   service_name :test_second_service
+  expose :test_response
 
   def test_response(data)
    p "Second: #{data}"
