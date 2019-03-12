@@ -1,10 +1,12 @@
 require_relative 'module/lightning_module'
+require_relative 'rabbitmq/rabbit'
 
 class First
-  include LightningModule
+  # include LightningModule
+  include RabbitModule
 
   service_name :test_service
-  expose :triggered
+  # expose :triggered
 
   def initialize
     broadcast(:started, "testdata")
@@ -15,6 +17,6 @@ class First
   end
 
   def trigger_test_service
-    trigger("test_second_service.test_response", "my data")
+    # trigger("test_second_service.test_response", "my data")
   end  
 end

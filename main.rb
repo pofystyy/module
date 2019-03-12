@@ -4,8 +4,8 @@ require_relative 'lib/storage/redis'
 
 second = Second.new
 first = First.new
-first.trigger_test_service
-second.trigger_test_service
+# first.trigger_test_service
+# second.trigger_test_service
 
 # => "Second: testdata"
 # => "Second: my data"
