@@ -1,6 +1,5 @@
 require_relative 'lib/first'
 require_relative 'lib/second'
-# require_relative 'lib/storage/redis'
 
 first = First.new
 second = Second.new
