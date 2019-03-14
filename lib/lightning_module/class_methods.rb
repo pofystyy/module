@@ -43,7 +43,7 @@ module ClassMethods
 
     def call_method
       parse_event_data
-      self.new.send(@method, storage.find("event-#{@service_name}", @event_name))
+      self.new.send(@method, storage.on("event-#{@service_name}", @event_name))
     end
 
     def parse_event_data

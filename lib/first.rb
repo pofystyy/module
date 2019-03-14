@@ -1,9 +1,7 @@
-require_relative 'module/lightning_module'
-require_relative 'rabbitmq/rabbit'
+require_relative 'lightning_module/lightning_module'
 
 class First
-  # include LightningModule
-  include RabbitModule
+  include LightningModule
 
   service_name :test_service
   expose :triggered

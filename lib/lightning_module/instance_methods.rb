@@ -15,8 +15,12 @@ module InstanceMethods
 
   def trigger(address, data)
     service_name, method = address.split(/\./)
-    
-    obj = Object.const_get(storage.find(service_name, 'class'))
-    storage.find(service_name, 'methods').include?(method) ? obj.new.send(method, data) : raise(Exceptions::MethodNameFailure)
+
+    info = storage.trigger(service_name, method)
+    clazz, methods = info
+    methods = eval(methods) if methods.is_a? String
+        
+    obj = Object.const_get clazz
+    methods.map(&:to_s).include?(method) ? obj.new.send(method, data) : raise(Exceptions::MethodNameFailure)
   end
 end
