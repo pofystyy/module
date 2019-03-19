@@ -12,7 +12,6 @@ module Storages
 
     def trigger(service_name, method = nil)
       service_data = [find(service_name, 'class'), find(service_name, 'methods')]
-      delete(service_name)
       service_data
     end
 
@@ -26,11 +25,15 @@ module Storages
       @db.hmset(key, values.each { |v| v })    
     end
 
-    private
-
     def find(global_key, finding_key)  
       @db.hget(global_key, finding_key)
     end
+
+    def findall(service)
+      @db.keys("#{service}:*")
+    end
+
+    private   
 
     def delete(service_name)
       @db.del(service_name)
