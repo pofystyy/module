@@ -15,4 +15,6 @@ class Second
   end
 
   on "test_service:started": :test_response
+  # on "test_service:main": :test_response
+  # on "test_service:data": :test_response
 end

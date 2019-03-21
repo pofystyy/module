@@ -8,6 +8,8 @@ class First
 
   def initialize
     broadcast(:started, "testdata")
+    # broadcast(:main, "main data")
+    # broadcast(:data, "broadcast data")
   end
 
   def triggered(name)
@@ -16,5 +18,5 @@ class First
 
   def trigger_test_service
     trigger("test_second_service.test_response", "my data")
-  end  
+  end   
 end

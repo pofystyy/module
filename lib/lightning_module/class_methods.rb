@@ -19,7 +19,7 @@ module ClassMethods
 
     def on(event)
       @event_data = [] if @event_data.nil?
-      @event_data.push event
+      @event_data.push(event)
       call_method
     end
 
@@ -38,16 +38,17 @@ module ClassMethods
     end
 
     def storage_insert
-      storage.insert(current_service_name, 'class', @service_data[:class], 'methods', @service_data[:methods])
+      storage.insert_service_data("service:#{current_service_name}", 'class', @service_data[:class], 'methods', @service_data[:methods])
     end
 
     def call_method
       parse_event_data
-      self.new.send(@method, storage.on("event-#{@service_name}", @event_name))
+      self.new.send(@method, storage.on("broadcast-#{current_service_name}-#{@service_name}-#{@event_name}", @event_name)) || ''
     end
 
     def parse_event_data
       @service_name, @event_name = @event_data.first.keys.join.split /:/
       @method = @event_data.first.values.join
+      @event_data.shift
     end
   end
