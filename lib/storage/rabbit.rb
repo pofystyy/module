@@ -6,45 +6,72 @@ module Storages
   class Rabbit < BaseStorage
     include Singleton
 
+    def initialize
+      @connection = Bunny.new
+    end
+
     def trigger(service_name, method)
       data = find(service_name)
       [data['class'.to_sym].to_s, data['methods'.to_sym]]
     end
 
     def on(service_name, event_name)
-      find(service_name)[event_name.to_sym]
+      find(service_name)[event_name.to_sym] rescue ''
     end
 
+    def insert_service_data(key, *values)
+      add_queue(key, values)
+      service_name_queue(key)
+    end   
+
     def insert(key, *values)
-      values = Hash[*values.map { |value| value.is_a?(String) ? value.to_sym : value }]
+      add_queue(key, values)   
+    end
 
-      bunny_connect
-
-      queue = @channel.queue(key, :auto_delete => true)      
-      @exchange.publish("#{values}", :routing_key => queue.name)
-      @connection.close    
+    def findall(key)
+      bunny_connect_subscribe('service')
+      [@output]
     end
 
     private
 
-    def find(global_key, finding_key = nil) 
-      bunny_connect
+    def add_queue(key, values)
+      values = Hash[*values.map { |value| value.is_a?(String) ? value.to_sym : value }]
 
-      queue = @channel.queue(global_key, :auto_delete => true)
-      queue.subscribe do |delivery_info, metadata, payload|
-        @output = eval(payload)
-      end
-      @connection.close
-      @output
+      queue = key
+      bunny_connect_publish(queue, key, values) 
     end
 
-    private 
+    def service_name_queue(key)
+      queue = 'service'
+      values = key
+      bunny_connect_publish(queue, key, values)
+    end
 
-    def bunny_connect
-      @connection = Bunny.new 
+    def find(global_key, finding_key = nil) 
+      bunny_connect_subscribe(global_key)
+      eval @output
+    end
+
+    def bunny_connect_publish(queue_name, key, values)
       @connection.start
-      @channel  = @connection.create_channel   
-      @exchange = @channel.default_exchange 
+      channel  = @connection.create_channel   
+      exchange = channel.default_exchange 
+      queue = channel.queue(queue_name, :auto_delete => true, :durable => true) 
+      exchange.publish("#{values}", :routing_key => queue.name)
+      @connection.close  
+    end
+
+    def bunny_connect_subscribe(queue_name)
+      @connection.start
+      channel  = @connection.create_channel   
+      exchange = channel.default_exchange 
+      queue = channel.queue(queue_name, :auto_delete => true, :durable => true)
+      queue.subscribe do |delivery_info, metadata, payload|
+        @output = payload
+      end
+      # channel.queue_delete(queue='queue')
+      @connection.close
     end
   end
 end
