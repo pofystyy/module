@@ -56,8 +56,8 @@ module Storages
     def bunny_connect_publish(queue_name, key, values)
       @connection.start
       channel  = @connection.create_channel   
-      exchange = channel.default_exchange 
-      queue = channel.queue(queue_name, :auto_delete => true, :durable => true) 
+      exchange = channel.direct("lightning_module", :auto_delete => true) 
+      queue = channel.queue(queue_name, :auto_delete => true, :durable => true).bind(exchange, :routing_key => queue_name)
       exchange.publish("#{values}", :routing_key => queue.name)
       @connection.close  
     end
@@ -65,8 +65,8 @@ module Storages
     def bunny_connect_subscribe(queue_name)
       @connection.start
       channel  = @connection.create_channel   
-      exchange = channel.default_exchange 
-      queue = channel.queue(queue_name, :auto_delete => true, :durable => true)
+      exchange = channel.direct("lightning_module", :auto_delete => true) 
+      queue = channel.queue(queue_name, :auto_delete => true, :durable => true).bind(exchange, :routing_key => queue_name)
       queue.subscribe do |delivery_info, metadata, payload|
         @output = payload
       end

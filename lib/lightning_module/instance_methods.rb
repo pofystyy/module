@@ -26,6 +26,7 @@ module InstanceMethods
     info = storage.trigger("service:#{service_name}", method)
     clazz, methods = info
     methods = eval(methods) if methods.is_a? String
+
     obj = Object.const_get clazz
     methods.map(&:to_s).include?(method) ? obj.new.send(method, data) : raise(Exceptions::MethodNameFailure)
   end
