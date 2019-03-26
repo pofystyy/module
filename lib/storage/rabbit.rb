@@ -67,7 +67,7 @@ module Storages
       queue.subscribe do |delivery_info, metadata, payload|
         @output = payload
       end
-      channel.queue_delete(queue='queue')
+      # channel.queue_delete(queue='queue')
       @connection.close
     end
   end
