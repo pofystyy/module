@@ -10,7 +10,7 @@ module Storages
       @connection = Bunny.new
     end
 
-    def trigger(service_name, method)
+    def trigger(service_name)
       data = find(service_name)
       [data['class'.to_sym].to_s, data['methods'.to_sym]]
     end
@@ -29,7 +29,7 @@ module Storages
     end
 
     def findall(key)
-      bunny_connect_subscribe('service')
+      bunny_connect_subscribe(key)
       [@output]
     end
 
@@ -38,14 +38,11 @@ module Storages
     def add_queue(key, values)
       values = Hash[*values.map { |value| value.is_a?(String) ? value.to_sym : value }]
 
-      queue = key
-      bunny_connect_publish(queue, key, values) 
+      bunny_connect_publish(key, values) 
     end
 
     def service_name_queue(key)
-      queue = 'service'
-      values = key
-      bunny_connect_publish(queue, key, values)
+      bunny_connect_publish('service', key)
     end
 
     def find(global_key, finding_key = nil) 
@@ -53,8 +50,8 @@ module Storages
       eval @output
     end
 
-    def bunny_connect_publish(queue_name, key, values)
-      @connection.start
+    def bunny_connect_publish(queue_name, values)
+      @connection.start      
       channel  = @connection.create_channel   
       exchange = channel.direct("lightning_module", :auto_delete => true) 
       queue = channel.queue(queue_name, :auto_delete => true, :durable => true).bind(exchange, :routing_key => queue_name)
@@ -70,7 +67,7 @@ module Storages
       queue.subscribe do |delivery_info, metadata, payload|
         @output = payload
       end
-      # channel.queue_delete(queue='queue')
+      channel.queue_delete(queue='queue')
       @connection.close
     end
   end

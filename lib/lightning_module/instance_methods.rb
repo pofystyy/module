@@ -1,5 +1,6 @@
 require_relative 'connect_to_db'
 require_relative 'exceptions'
+require 'jimson'
 
 module InstanceMethods
   class Exceptions
@@ -12,10 +13,10 @@ module InstanceMethods
     service_name = self.class.current_service_name
 
     services = storage.findall('service')
-    services = services - ["service:#{service_name}"]
+    services = services - ["service.#{service_name}"]
     services = services.map { |service_n| service_n.scan(/\w+$/) }
 
-    services.each { |service_n| storage.insert("broadcast-#{service_n.join}-#{service_name}-#{name.to_s}", 
+    services.each { |service_n| storage.insert("broadcast.#{service_n.join}.#{service_name}.#{name.to_s}", 
                                                 name.to_s, 
                                                 data) } unless services.flatten.empty?
   end
@@ -23,7 +24,7 @@ module InstanceMethods
   def trigger(address, data)
     service_name, method = address.split(/\./)
 
-    info = storage.trigger("service:#{service_name}", method)
+    info = storage.trigger("service.#{service_name}")
     clazz, methods = info
     methods = eval(methods) if methods.is_a? String
 
