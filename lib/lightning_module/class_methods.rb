@@ -1,5 +1,6 @@
 require_relative 'connect_to_db'
 require_relative 'exceptions'
+require 'jimson'
 
 module ClassMethods
     include ConnectToDb
@@ -38,12 +39,13 @@ module ClassMethods
     end
 
     def storage_insert
-      storage.insert_service_data("service:#{current_service_name}", 'class', @service_data[:class], 'methods', @service_data[:methods])
+      storage.insert_service_data("service.#{current_service_name}", 'class', @service_data[:class], 'methods', @service_data[:methods])
     end
 
     def call_method
       parse_event_data
-      self.new.send(@method, storage.on("broadcast-#{current_service_name}-#{@service_name}-#{@event_name}", @event_name)) || ''
+      data = storage.on("broadcast.#{current_service_name}.#{@service_name}.#{@event_name}", @event_name) || ''
+      self.new.send(@method, data)
     end
 
     def parse_event_data

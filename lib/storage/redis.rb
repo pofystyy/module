@@ -10,7 +10,7 @@ module Storages
       @db = ::Redis.new
     end
 
-    def trigger(service_name, method = nil)
+    def trigger(service_name)
       [find(service_name, 'class'), find(service_name, 'methods')]
     end
 

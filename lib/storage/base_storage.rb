@@ -12,7 +12,15 @@ module Storages
       raise NotImplementedError
     end
 
-    def find(global_key, finding_key) 
+    def trigger(service_name)
+      raise NotImplementedError
+    end
+
+    def findall(key)
+      raise NotImplementedError
+    end
+
+    def insert_service_data(key, *values)
       raise NotImplementedError
     end
   end
