@@ -4,6 +4,7 @@ GEM
     amq-protocol (2.3.0)
     bunny (2.14.1)
       amq-protocol (~> 2.3, >= 2.3.0)
+    byebug (11.0.1)
     redis (4.1.0)
 
 PLATFORMS
@@ -11,6 +12,7 @@ PLATFORMS
 
 DEPENDENCIES
   bunny
+  byebug
   redis
 
 BUNDLED WITH
