@@ -29,7 +29,7 @@ module Storages
     end
 
     def findall(key)
-      @db.keys("#{key}:*")
+      @db.keys("#{key}.*")
     end
 
     private  
