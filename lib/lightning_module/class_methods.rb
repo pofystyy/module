@@ -1,6 +1,7 @@
 require_relative 'connect_to_db'
 require_relative 'exceptions'
 require 'jimson'
+require 'byebug'
 
 module ClassMethods
     include ConnectToDb

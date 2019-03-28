@@ -4,7 +4,7 @@ class First
   include LightningModule
 
   service_name :test_service
-  expose :triggered
+  expose :triggered, :triggered2
 
   def initialize
     broadcast(:started, "testdata")
@@ -14,6 +14,10 @@ class First
 
   def triggered(name)
    p "First: #{name}"
+  end
+
+  def triggered2(name)
+   p "First2: #{name}"
   end
 
   def trigger_test_service
