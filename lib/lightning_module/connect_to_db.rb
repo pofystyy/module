@@ -1,5 +1,4 @@
-require_relative '../storage/redis'
-require_relative '../storage/rabbit'
+Dir[File.dirname(__FILE__) + '/../storage/**/*.rb'].each { |file| require file }
 
 module ConnectToDb
   def storage(db = 'redis')
