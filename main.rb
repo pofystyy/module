@@ -8,12 +8,6 @@ first.trigger_test_service
 second.trigger_test_service
 # second.trigger_test_service2
 
-# server = Jimson::Server.new(First.new)
-# server.start
-
-# server = Jimson::Server.new(Second.new)
-# server.start
-
 # => "Second: testdata"
 # => "Second: my data"
 # => "First: data"

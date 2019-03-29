@@ -10,8 +10,8 @@ module Storages
       @db = ::Redis.new
     end
 
-    def trigger(service_name)
-      [find(service_name, 'class'), find(service_name, 'methods')]
+    def trigger(key, *values)
+      add_to_db(key, values)
     end
 
     def on(service_name, event_name)
