@@ -11,11 +11,11 @@ class Second
   end
 
   def trigger_test_service
-    trigger("test_service.triggered", "data")
+    trigger("test_service.triggered", "data1")
   end
 
    def trigger_test_service2
-    trigger("test_service.triggered2", "data")
+    trigger("test_service.triggered2", "data2")
   end
 
   on "test_service:started": :test_response

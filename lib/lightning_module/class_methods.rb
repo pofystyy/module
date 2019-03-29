@@ -1,6 +1,5 @@
 require_relative 'connect_to_db'
 require_relative 'exceptions'
-require 'jimson'
 require 'byebug'
 
 module ClassMethods
@@ -22,7 +21,9 @@ module ClassMethods
     def on(event)
       @event_data = [] if @event_data.nil?
       @event_data.push(event)
-      call_method
+      parse_event_data
+      data = storage.on("#{@service_name}.#{current_service_name}.#{@event_name}", @event_name)
+      self.new.send(@method, data)
     end
 
     def current_service_name
@@ -41,12 +42,6 @@ module ClassMethods
 
     def storage_insert
       storage.insert_service_data("service.#{current_service_name}", 'class', @service_data[:class], 'methods', @service_data[:methods])
-    end
-
-    def call_method
-      parse_event_data
-      data = storage.on("broadcast.#{current_service_name}.#{@service_name}.#{@event_name}", @event_name) || ''
-      self.new.send(@method, data)
     end
 
     def parse_event_data
