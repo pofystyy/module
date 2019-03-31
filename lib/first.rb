@@ -21,6 +21,6 @@ class First
   end
 
   def trigger_test_service
-    trigger("test_second_service.test_response", "my data")
-  end   
+    p trigger("test_second_service.test_response", "my data")
+  end
 end
