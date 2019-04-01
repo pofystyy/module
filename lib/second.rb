@@ -15,17 +15,17 @@ class Second
   end
 
    def trigger_test_service2
-    p trigger("test_first_service.triggered2", "data2")
+    p trigger("test_first_service.triggered", "data2")
   end
 
   def else_response(data)
-    p "from triggered: #{data}"
+    p "result from Second#on_triggered: #{data}"
   end
 
   # from broadcast
   on_broadcast "test_first_service:started": :test_response
 
   # from trigger
-  on_triggered 'trgger.test_second_service.test_response'
-  # on 'trgger.test_second_service.else_response'
+  on_triggered 'test_second_service.test_response'
+  on_triggered 'test_second_service.else_response'
 end

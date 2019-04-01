@@ -21,15 +21,20 @@ class First
   end
 
   def trigger_test_service
-    trigger("test_second_service.test_response", "my data")
-    # output = ''
-    # while output.empty?
-    #   output = check_result
-    # end
-    # output
+    trigger("test_second_service.test_response", "data from first to Second#test_response")
+    output = ''
+    while output.empty?
+      output = check_result("test_second_service.test_response")
+    end
+    p output
   end
 
   def trigger_test_service2
-    trigger("test_second_service.else_response", "my data")
+    trigger("test_second_service.else_response", "data from first to Second#else_response")
+    output = ''
+    while output.empty?
+      output = check_result("test_second_service.else_response")
+    end
+    p output
   end
 end

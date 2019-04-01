@@ -10,8 +10,8 @@ module Storages
       @db = ::Redis.new
     end
 
-    def trigger(key, values)
-      add_to_db("trigger.#{key}", values)
+    def trigger(key, *values)
+      add_to_db(key, values)
     end
 
     def on_broadcast(service_name, event_name)
@@ -32,11 +32,15 @@ module Storages
       @db.keys("#{key}.*")
     end
 
-    private
+    def on_triggered(global_key, finding_key)
+      find(global_key, finding_key)
+    end
 
     def find(global_key, finding_key)
       @db.hget(global_key, finding_key)
     end
+
+    private
 
     def add_to_db(key, values)
       @db.hmset(key, values.each { |v| v })

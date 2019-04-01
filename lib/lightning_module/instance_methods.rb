@@ -22,7 +22,13 @@ module InstanceMethods
   end
 
   def trigger(address, data)
-    # service_name, method = address.split(/\./)
-    storage.trigger(address, data)
+    _, method = address.split(/\./)
+    # p address
+    # p method
+    storage.trigger(address, method, data, 'response', '')
+  end
+
+  def check_result(data)
+    storage.find(data, 'response')
   end
 end
