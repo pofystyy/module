@@ -22,17 +22,7 @@ module InstanceMethods
   end
 
   def trigger(address, data)
-    service_name, method = address.split(/\./)
-
-    arr = []
-    i = 0
-    while arr.empty? #|| i < 5
-      clazz = storage.trigger(service_name, 'class')
-      # arr << clazz.nil?
-      arr << Object.const_get(clazz).new.send(method, data) unless clazz.nil?
-      sleep 1
-      # i += 1
-    end
-    return arr
+    # service_name, method = address.split(/\./)
+    storage.trigger(address, data)
   end
 end

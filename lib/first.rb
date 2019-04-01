@@ -3,7 +3,7 @@ require_relative 'lightning_module/lightning_module'
 class First
   include LightningModule
 
-  service_name :test_service
+  service_name :test_first_service
   expose :triggered, :triggered2
 
   def initialize
@@ -21,6 +21,15 @@ class First
   end
 
   def trigger_test_service
-    p trigger("test_second_service.test_response", "my data")
+    trigger("test_second_service.test_response", "my data")
+    # output = ''
+    # while output.empty?
+    #   output = check_result
+    # end
+    # output
+  end
+
+  def trigger_test_service2
+    trigger("test_second_service.else_response", "my data")
   end
 end

@@ -15,7 +15,7 @@ module Storages
       [data['class'.to_sym].to_s, data['methods'.to_sym]]
     end
 
-    def on(service_name, event_name)
+    def on_broadcast(service_name, event_name)
       find(service_name)[event_name.to_sym] rescue ''
     end
 

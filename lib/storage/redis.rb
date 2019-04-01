@@ -11,10 +11,10 @@ module Storages
     end
 
     def trigger(key, values)
-      find("service.#{key}", values)
+      add_to_db("trigger.#{key}", values)
     end
 
-    def on(service_name, event_name)
+    def on_broadcast(service_name, event_name)
       service_data = find(service_name, event_name)
       delete(service_name)
       service_data

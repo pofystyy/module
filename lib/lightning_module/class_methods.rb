@@ -18,11 +18,11 @@ module ClassMethods
       call_insert_to_storage
     end
 
-    def on(event)
+    def on_broadcast(event)
       @event_data = [] if @event_data.nil?
       @event_data.push(event)
       parse_event_data
-      data = storage.on("#{@service_name}.#{current_service_name}.#{@event_name}", @event_name)
+      data = storage.on_broadcast("#{@service_name}.#{current_service_name}.#{@event_name}", @event_name)
       self.new.send(@method, data)
     end
 
