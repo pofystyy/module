@@ -1,4 +1,5 @@
 require_relative 'lightning_module/lightning_module'
+require 'byebug'
 
 class First
   include LightningModule
@@ -7,7 +8,7 @@ class First
   expose :triggered, :triggered2
 
   def initialize
-    broadcast(:started, "testdata")
+    # broadcast(:started, "testdata")
     # broadcast(:main, "main data")
     # broadcast(:data, "broadcast data")
   end
@@ -21,10 +22,14 @@ class First
   end
 
   def trigger_test_service
+    
     trigger("test_second_service.test_response", "data from first to Second#test_response")
+    # byebug
     output = ''
     while output.empty?
+      # byebug
       output = check_result("test_second_service.test_response")
+      byebug
     end
     p output
   end
@@ -34,6 +39,7 @@ class First
     output = ''
     while output.empty?
       output = check_result("test_second_service.else_response")
+      byebug
     end
     p output
   end
