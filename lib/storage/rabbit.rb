@@ -16,7 +16,7 @@ module Storages
     end
 
     def on_broadcast(service_name, event_name)
-      find(service_name)[event_name.to_sym] rescue ''
+      find(service_name)[event_name.to_sym] #rescue ''
     end
 
     def insert_service_data(key, *values)

@@ -22,13 +22,13 @@ module InstanceMethods
   end
 
   def trigger(address, data)
-    _, method = address.split(/\./)
-    # p address
-    # p method
-    storage.trigger(address, method, data, 'response', '')
+    method = address.split(/\./).last
+    storage.trigger(address, method, data, 'response', '', 'code', '')
   end
 
-  def check_result(data)
-    storage.find(data, 'response')
+  def check_result(global_key)
+    out = storage.find(global_key, 'response')
+    storage.delete(global_key) if storage.find(global_key, 'code') == '200'
+    out
   end
 end

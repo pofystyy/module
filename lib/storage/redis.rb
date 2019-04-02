@@ -1,6 +1,7 @@
 require_relative 'base_storage'
 require 'singleton'
 require 'redis'
+require 'byebug'
 
 module Storages
   class Redis < BaseStorage
@@ -37,17 +38,18 @@ module Storages
     end
 
     def find(global_key, finding_key)
-      @db.hget(global_key, finding_key)
+      info = @db.hget(global_key, finding_key)
+      Marshal.load(info) unless info.nil?
+    end
+
+    def delete(service_name)
+      @db.del(service_name)
     end
 
     private
 
     def add_to_db(key, values)
-      @db.hmset(key, values.each { |v| v })
-    end
-
-    def delete(service_name)
-      @db.del(service_name)
+      @db.hmset(key, values.map.with_index { |val, ind| (ind.even? ? val : Marshal.dump(val)) })
     end
   end
 end

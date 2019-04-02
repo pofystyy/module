@@ -33,8 +33,7 @@ module ClassMethods
     def on_triggered(data)
       method = data.split('.').last
       result = storage.on_triggered(data, method)
-      storage.trigger(data, 'response', self.new.send(method, result))
-      # p "-------#{storage.find(data, 'response')}"
+      storage.trigger(data, 'response', self.new.send(method, result), 'code', '200')
     end
 
     private

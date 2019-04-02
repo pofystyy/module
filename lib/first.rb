@@ -8,7 +8,7 @@ class First
   expose :triggered, :triggered2
 
   def initialize
-    # broadcast(:started, "testdata")
+    broadcast(:started, "testdata")
     # broadcast(:main, "main data")
     # broadcast(:data, "broadcast data")
   end
@@ -22,25 +22,22 @@ class First
   end
 
   def trigger_test_service
-    
-    trigger("test_second_service.test_response", "data from first to Second#test_response")
-    # byebug
+    trigger("test_second_service.test_response", { kbkj: 2 })
+
     output = ''
-    while output.empty?
-      # byebug
+    while output.to_s.empty? 
       output = check_result("test_second_service.test_response")
-      byebug
     end
     p output
   end
 
-  def trigger_test_service2
-    trigger("test_second_service.else_response", "data from first to Second#else_response")
-    output = ''
-    while output.empty?
-      output = check_result("test_second_service.else_response")
-      byebug
-    end
-    p output
-  end
+  # def trigger_test_service2
+  #   trigger("test_second_service.else_response", "data from first to Second#else_response")
+  #   output = ''
+  #   while output.empty?
+  #     output = check_result("test_second_service.else_response")
+  #     # byebug
+  #   end
+  #   p output
+  # end
 end

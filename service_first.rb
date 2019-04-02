@@ -4,5 +4,5 @@ first = First.new
 
 # loop do
   first.trigger_test_service
-  first.trigger_test_service2
+  # first.trigger_test_service2
 # end
