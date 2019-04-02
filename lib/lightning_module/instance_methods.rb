@@ -28,7 +28,7 @@ module InstanceMethods
 
   def check_result(global_key)
     out = storage.find(global_key, 'response')
-    storage.delete(global_key) if storage.find(global_key, 'code') == '200'
+    storage.delete(global_key) if storage.find(global_key, 'code') == '200' && !out.empty?
     out
   end
 end
