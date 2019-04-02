@@ -27,6 +27,7 @@ class First
     output = ''
     while output.to_s.empty? 
       output = check_result("test_second_service.test_response")
+      sleep 0.1
     end
     p output
   end
