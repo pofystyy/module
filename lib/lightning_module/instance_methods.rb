@@ -7,7 +7,7 @@ module InstanceMethods
     class BaseServiceExceptions < LightningModule::Exceptions::BaseException; end
     class MethodNameFailure < BaseServiceExceptions; end
   end
-  include ConnectToDb
+  include LightningModule::ConnectToDb
 
   def broadcast(name, data)
     service_name = self.class.current_service_name

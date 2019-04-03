@@ -3,7 +3,7 @@ require_relative 'exceptions'
 require 'byebug'
 
 module ClassMethods
-    include ConnectToDb
+    include LightningModule::ConnectToDb
 
     def service_name(name)
       check_service_data
