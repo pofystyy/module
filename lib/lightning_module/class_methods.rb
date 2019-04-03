@@ -30,16 +30,17 @@ module ClassMethods
       @service_data[:service_name]
     end
 
-    def on_triggered(data)
-      method = data.split('.').last
-      result = storage.on_triggered(data, method)
-      storage.trigger(data, 'response', self.new.send(method, result), 'code', '200')
+    def on_triggered(service)
+      method = service.split('.').last
+      params = storage.on_triggered(service, method)
+      response = self.new.send(method, params)
+      storage.trigger(service, 'response', response, 'code', '200')
     end
 
     private
 
     def check_service_data
-      @service_data = {} if @service_data.nil? 
+      @service_data = {} if @service_data.nil?
     end
 
     def call_insert_to_storage
