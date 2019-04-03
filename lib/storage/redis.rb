@@ -39,8 +39,9 @@ module LightningModule
       end
 
       def find(global_key, finding_key)
-        info = @db.hget(global_key, finding_key)
-        Marshal.load(info) unless info.nil?
+        result = @db.hget(global_key, finding_key)
+        # byebug
+        Marshal.load(result) unless result.nil?
       end
 
       def delete(service_name)

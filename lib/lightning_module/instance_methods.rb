@@ -31,4 +31,5 @@ module InstanceMethods
     storage.delete(global_key) if storage.find(global_key, 'code') == '200' && !out.empty?
     out
   end
+
 end

@@ -4,6 +4,7 @@ require 'byebug'
 
 module ClassMethods
     include LightningModule::ConnectToDb
+    attr_accessor :triggered_services
 
     def service_name(name)
       check_service_data
@@ -31,10 +32,26 @@ module ClassMethods
     end
 
     def on_triggered(service)
+      @triggered_services = [] if @triggered_services.nil?
+      @triggered_services << service
+    end
+
+    def run_triggered(service)
       method = service.split('.').last
       params = storage.on_triggered(service, method)
-      response = self.new.send(method, params)
-      storage.trigger(service, 'response', response, 'code', '200')
+      unless params.nil?
+        response = self.new.send(method, params)
+        storage.trigger(service, 'response', response, 'code', '200')
+      end
+    end
+
+    def start_listener
+      loop do
+        @triggered_services.each do |service|
+          run_triggered(service)
+        end
+        sleep 1
+      end
     end
 
     private
