@@ -22,13 +22,7 @@ class First
   end
 
   def trigger_test_service
-    trigger("test_second_service.test_response", { kbkj: 2 })
-
-    output = ''
-    while output.to_s.empty?
-      output = check_result("test_second_service.test_response")
-    end
-    p output
+    p trigger("test_second_service.test_response", { kbkj: 2 })
   end
 
   # def trigger_test_service2
