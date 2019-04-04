@@ -12,11 +12,11 @@ module InstanceMethods
   def broadcast(name, data)
     service_name = self.class.current_service_name
 
-    services = storage.findall('service')
+    services = storage.findall('service.*')
     services = services - ["service.#{service_name}"]
     services = services.map { |service_n| service_n.scan(/\w+$/) }
 
-    services.each { |service_n| storage.insert("#{service_name}.#{service_n.join}.#{name.to_s}",
+    services.each { |service_n| storage.insert("broadcast.#{service_name}.#{service_n.join}.#{name.to_s}",
                                                 name.to_s,
                                                 data) } unless services.flatten.empty?
   end
@@ -24,10 +24,10 @@ module InstanceMethods
   def trigger(address, data)
     service_name, method = address.split('.')
     if (storage.find("service.#{service_name}", 'methods').map(&:to_s).include?(method) rescue true)
-      storage.trigger(address, method, data, 'response', '', 'code', '')
+      storage.trigger("trigger.#{self.class.current_service_name}.#{address}", method, data, 'response', '', 'code', '')
         output = ''
       while output.to_s.empty?
-        output = check_result(address)
+        output = check_result("trigger.#{self.class.current_service_name}.#{address}")
       end
       return output
     else

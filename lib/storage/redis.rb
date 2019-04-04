@@ -31,7 +31,7 @@ module LightningModule
       end
 
       def findall(key)
-        @db.keys("#{key}.*")
+        @db.keys(key)
       end
 
       def on_triggered(global_key, finding_key)
