@@ -23,6 +23,7 @@ module ClassMethods
       @event_data = [] if @event_data.nil?
       @event_data.push(event)
       parse_event_data
+      # p "broadcast.#{@service_name}.#{current_service_name}.#{@event_name}"
       data = storage.on_broadcast("broadcast.#{@service_name}.#{current_service_name}.#{@event_name}", @event_name)
       self.new.send(@method, data)
     end
@@ -48,9 +49,7 @@ module ClassMethods
 
     def start_listener
       loop do
-        @triggered_services.each do |service|
-          run_triggered(service)
-        end
+        @triggered_services.each { |service| run_triggered(service) } unless @triggered_services.nil?
         sleep 1
       end
     end
