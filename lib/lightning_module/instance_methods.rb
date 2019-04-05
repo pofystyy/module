@@ -11,8 +11,10 @@ module InstanceMethods
   include LightningModule::ConnectToDb
 
   def broadcast(name, data)
-    services = storage.findall('service.*')
-    services = services - ["service.#{this_service_name}"]
+    # byebug
+    p services = storage.findall('service')
+    # p "this: service.#{this_service_name}"
+    p services = services - ["service.#{this_service_name}"]
     # p services
     unless services.first.nil?
       services = services.map { |service_n| service_n.scan(/\w+$/) } 

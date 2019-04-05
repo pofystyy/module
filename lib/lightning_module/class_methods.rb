@@ -65,6 +65,7 @@ module ClassMethods
     end
 
     def storage_insert
+      # p "service.#{current_service_name}"
       storage.insert_service_data("service.#{current_service_name}", 'class', @service_data[:class], 'methods', @service_data[:methods])
     end
 
