@@ -17,7 +17,7 @@ module LightningModule
       end
 
       def on_broadcast(service_name, event_name)
-        find(service_name)[event_name.to_sym] #rescue ''
+        find(service_name)[event_name.to_sym] rescue ''
       end
 
       def insert_service_data(key, *values)
@@ -68,7 +68,10 @@ module LightningModule
         queue.subscribe do |delivery_info, metadata, payload|
           @output = payload
         end
-        # channel.queue_delete(queue='queue')
+        # channel.queue_delete(queue='service.test_second_service')
+        # channel.queue_delete(queue='broadcast.test_second_service.test_service.started')
+        # channel.queue_delete(queue='service.test_first_service')
+        # channel.queue_delete(queue='service')
         @connection.close
       end
     end
