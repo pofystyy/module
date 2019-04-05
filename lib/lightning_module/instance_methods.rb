@@ -1,5 +1,6 @@
 require_relative 'connect_to_db'
 require_relative 'exceptions'
+require_relative 'config_load'
 require 'byebug'
 
 module InstanceMethods
@@ -10,26 +11,23 @@ module InstanceMethods
   include LightningModule::ConnectToDb
 
   def broadcast(name, data)
-    service_name = self.class.current_service_name
-
     services = storage.findall('service.*')
-    services = services - ["service.#{service_name}"]
-    services = services.map { |service_n| service_n.scan(/\w+$/) }
+    services = services - ["service.#{this_service_name}"]
+    # p services
+    unless services.first.nil?
+      services = services.map { |service_n| service_n.scan(/\w+$/) } 
 
-    services.each { |service_n| storage.insert("broadcast.#{service_name}.#{service_n.join}.#{name.to_s}",
-                                                name.to_s,
-                                                data) } unless services.flatten.empty?
+      services.each { |service_n| storage.insert_service_data("broadcast.#{this_service_name}.#{service_n.join}.#{name.to_s}",
+                                                  name.to_s,
+                                                  data) } unless services.flatten.empty?
+    end
   end
 
   def trigger(address, data)
     service_name, method = address.split('.')
     if (storage.find("service.#{service_name}", 'methods').map(&:to_s).include?(method) rescue true)
-      storage.trigger("trigger.#{self.class.current_service_name}.#{address}", method, data, 'response', '', 'code', '')
-        output = ''
-      while output.to_s.empty?
-        output = check_result("trigger.#{self.class.current_service_name}.#{address}")
-      end
-      return output
+      storage.trigger("trigger.#{this_service_name}.#{address}", method, data, 'response', '', 'code', '')
+      check_data_from_db(address)
     else
       return "method #{method} in service #{service_name} not found"
       # raise Exceptions::MethodNameFailure
@@ -37,6 +35,18 @@ module InstanceMethods
   end
 
   private
+
+  def this_service_name
+    self.class.current_service_name
+  end
+
+  def check_data_from_db(address)
+    output = ''
+    while output.to_s.empty?
+      output = check_result("trigger.#{this_service_name}.#{address}")
+    end
+    return output
+  end
 
   def check_result(global_key)
     output = storage.find(global_key, 'response')
