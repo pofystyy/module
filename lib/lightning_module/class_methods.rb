@@ -23,7 +23,6 @@ module ClassMethods
       @event_data = [] if @event_data.nil?
       @event_data.push(event)
       parse_event_data
-      # p "broadcast.#{@service_name}.#{current_service_name}.#{@event_name}"
       data = storage.on_broadcast("broadcast.#{@service_name}.#{current_service_name}.#{@event_name}", @event_name)
       self.new.send(@method, data)
     end
@@ -65,7 +64,6 @@ module ClassMethods
     end
 
     def storage_insert
-      # p "service.#{current_service_name}"
       storage.insert_service_data("service.#{current_service_name}", 'class', @service_data[:class], 'methods', @service_data[:methods])
     end
 
