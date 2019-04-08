@@ -26,7 +26,7 @@ class Second
   on_broadcast "test_first_service:started": :test_response
 
   # from trigger
-  # on_triggered 'test_second_service.test_response'
+  on_triggered 'test_second_service.test_response'
   # on_triggered 'test_second_service.else_response'
   # start_listener
 end

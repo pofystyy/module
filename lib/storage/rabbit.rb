@@ -12,9 +12,8 @@ module LightningModule
         @connection = Bunny.new
       end
 
-      def trigger(service_name)
-        data = find(service_name)
-        [data['class'.to_sym].to_s, data['methods'.to_sym]]
+      def trigger(service_name, *values)
+        bunny_connect_publish(service_name, values)
       end
 
       def on_broadcast(service_name, event_name)
@@ -27,12 +26,27 @@ module LightningModule
       end   
 
       def insert(key, *values)
-        add_queue(key, values)   
+        add_queue(key, values)  
+        for_broadcast(key.split('.')[1])
       end
 
       def findall(key)
         bunny_connect_subscribe(key)
         @output
+      end
+
+      def on_triggered(global_key, finding_key)
+        bunny_connect_subscribe(global_key)
+        Hash[*(eval(@output.join))][finding_key] rescue ''
+      end
+
+      def find(global_key, finding_key = nil)
+        bunny_connect_subscribe(global_key)
+        @output
+      end
+
+      def find2(global_key, finding_key = nil)
+        bunny_connect_subscribe(global_key)
       end
 
       private
@@ -47,9 +61,8 @@ module LightningModule
         bunny_connect_publish('service', key)
       end
 
-      def find(global_key, finding_key = nil)
-        bunny_connect_subscribe(global_key)
-        @output
+      def for_broadcast(key)
+        bunny_connect_publish('broadcast', key)
       end
 
       def bunny_connect_publish(queue_name, values)
@@ -73,6 +86,8 @@ module LightningModule
         # channel.queue_delete(queue='service.test_first_service')
         # channel.queue_delete(queue='service.test_second_service')
         # channel.queue_delete(queue='service')
+        # channel.queue_delete(queue='broadcast')
+        # channel.queue_delete(queue='result.trigger.test_second_service.test_response')
 
         # channel.queue_delete(queue='broadcast.test_first_service.test_first_service.started')
         # channel.queue_delete(queue="broadcast.test_first_service.started.started")

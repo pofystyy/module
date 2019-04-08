@@ -24,8 +24,8 @@ module InstanceMethods
 
   def trigger(address, data)
     service_name, method = address.split('.')
-    if (storage.find("service.#{service_name}", 'methods').map(&:to_s).include?(method) rescue true)
-      storage.trigger("trigger.#{this_service_name}.#{address}", method, data, 'response', '', 'code', '')
+    if (storage.find2("service.#{service_name}", 'methods').map(&:to_s).include?(method) rescue true)
+      storage.trigger("trigger.#{address}", method, data, 'response', '', 'code', '')
       check_data_from_db(address)
     else
       return "method #{method} in service #{service_name} not found"
@@ -42,13 +42,13 @@ module InstanceMethods
   def check_data_from_db(address)
     output = ''
     while output.to_s.empty?
-      output = check_result("trigger.#{this_service_name}.#{address}")
+      output = check_result("result.trigger.#{address}")
     end
     return output
   end
 
   def check_result(global_key)
-    output = storage.find(global_key, 'response')
+    output = storage.on_triggered(global_key, 'response')
     storage.delete(global_key) if storage.find(global_key, 'code') == '200' && !output.empty?
     output
   end

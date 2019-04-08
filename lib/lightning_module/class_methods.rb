@@ -31,26 +31,11 @@ module ClassMethods
       @service_data[:service_name]
     end
 
-    def on_triggered(service)
-      @triggered_services = [] if @triggered_services.nil?
-      @triggered_services << service
-    end
-
-    def run_triggered(service)
-      key_for_trigger = storage.findall("trigger.*.#{service}").join
-      method = service.split('.').last
-      params = storage.on_triggered(key_for_trigger, method)
-      unless params.nil?
-        response = self.new.send(method, params)
-        storage.trigger(key_for_trigger, 'response', response, 'code', '200')
-      end
-    end
-
-    def start_listener
-      loop do
-        @triggered_services.each { |service| run_triggered(service) } unless @triggered_services.nil?
-        sleep 1
-      end
+    def on_triggered(data)
+      method = data.split('.').last
+      result = storage.on_triggered("trigger.#{data}", method)
+      response = self.new.send(method, result)
+      storage.trigger("result.trigger.#{data}", 'response', response, 'code', '200')
     end
 
     private
@@ -64,7 +49,7 @@ module ClassMethods
     end
 
     def storage_insert
-      storage.insert_service_data("service.#{current_service_name}", 'class', @service_data[:class], 'methods', @service_data[:methods])
+      storage.insert_service_data("service.#{current_service_name}", 'class', @service_data[:class].to_s, 'methods', @service_data[:methods])
     end
 
     def parse_event_data
