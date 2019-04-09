@@ -32,10 +32,12 @@ module ClassMethods
     end
 
     def on_triggered(data)
-      method = data.split('.').last
+      service_name, method = data.split('.')
       result = storage.on_triggered("trigger.#{data}", method)
+      result.is_a?(Array) ? (result, from = result) : (from = storage.on_triggered("trigger.#{data}", 'from'))
       response = self.new.send(method, result)
-      storage.trigger("result.trigger.#{data}", 'response', response, 'code', '200')
+      storage.delete("trigger.#{data}")
+      storage.trigger("trigger.#{from}.#{service_name}", 'response', response) if from
     end
 
     private

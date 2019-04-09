@@ -38,6 +38,14 @@ module LightningModule
         find(global_key, finding_key)
       end
 
+      def find2(global_key, finding_key)
+        find(global_key, finding_key)
+      end
+
+      def find3(global_key, finding_key)
+        find(global_key, finding_key)
+      end
+
       def find(global_key, finding_key)
         result = @db.hget(global_key, finding_key)
         # byebug

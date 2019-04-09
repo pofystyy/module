@@ -37,7 +37,8 @@ module LightningModule
 
       def on_triggered(global_key, finding_key)
         bunny_connect_subscribe(global_key)
-        Hash[*(eval(@output.join))][finding_key] rescue ''
+        data = Hash[*(eval(@output.join))] rescue ''
+        [data[finding_key], data['from']]
       end
 
       def find(global_key, finding_key = nil)
@@ -47,6 +48,14 @@ module LightningModule
 
       def find2(global_key, finding_key = nil)
         bunny_connect_subscribe(global_key)
+      end
+
+      def find3(global_key, finding_key = nil)
+        bunny_connect_subscribe(global_key)
+        Hash[*(eval(@output.join))][finding_key] rescue ''
+      end
+
+      def delete(service_name)
       end
 
       private
@@ -83,14 +92,7 @@ module LightningModule
         queue.subscribe do |delivery_info, metadata, payload|
           @output << payload
         end
-        # channel.queue_delete(queue='service.test_first_service')
-        # channel.queue_delete(queue='service.test_second_service')
-        # channel.queue_delete(queue='service')
-        # channel.queue_delete(queue='broadcast')
-        # channel.queue_delete(queue='result.trigger.test_second_service.test_response')
-
-        # channel.queue_delete(queue='broadcast.test_first_service.test_first_service.started')
-        # channel.queue_delete(queue="broadcast.test_first_service.started.started")
+        # channel.queue_delete(queue='queue_name')
         @connection.close
       end
     end
