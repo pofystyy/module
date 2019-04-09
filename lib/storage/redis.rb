@@ -12,10 +12,6 @@ module LightningModule
         @db = ::Redis.new
       end
 
-      def add(key, *values)
-        add_to_db(key, values)
-      end
-
       def find_data_for_broadcast(service_name, event_name)
         service_data = find(service_name, event_name)
         delete(service_name)
@@ -27,12 +23,12 @@ module LightningModule
         service_names('service', key)
       end
 
-      def find_all(service)
-        @db.smembers(service)
-      end
-
       def insert(key, *values)
         add_to_db(key, values)
+      end
+
+      def find_all(service)
+        @db.smembers(service)
       end
 
       def find_data_for_triggered(global_key, finding_key)

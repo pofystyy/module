@@ -1,11 +1,11 @@
 module LightningModule
   module Storages
     class BaseStorage
-      def trigger(service_name, method)
+      def find_data_for_broadcast(service_name, event_name)
         raise NotImplementedError
       end
 
-      def on(service_name, event_name)
+      def insert_service_data(key, *values)
         raise NotImplementedError
       end
 
@@ -13,15 +13,19 @@ module LightningModule
         raise NotImplementedError
       end
 
-      def trigger(service_name)
+      def find_all(key)
         raise NotImplementedError
       end
 
-      def findall(key)
+      def find_data_for_triggered(global_key, finding_key)
         raise NotImplementedError
       end
 
-      def insert_service_data(key, *values)
+      def expose_methods(global_key, finding_key)
+        raise NotImplementedError
+      end
+
+      def data_for_check_result(global_key, finding_key)
         raise NotImplementedError
       end
 
