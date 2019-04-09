@@ -12,11 +12,11 @@ module LightningModule
         @db = ::Redis.new
       end
 
-      def trigger(key, *values)
+      def add(key, *values)
         add_to_db(key, values)
       end
 
-      def on_broadcast(service_name, event_name)
+      def find_data_for_broadcast(service_name, event_name)
         service_data = find(service_name, event_name)
         delete(service_name)
         service_data
@@ -24,32 +24,27 @@ module LightningModule
 
       def insert_service_data(key, *values)
         add_to_db(key, values)
+        service_names('service', key)
+      end
+
+      def find_all(service)
+        @db.smembers(service)
       end
 
       def insert(key, *values)
         add_to_db(key, values)
       end
 
-      def findall(key)
-        @db.keys(key)
-      end
-
-      def on_triggered(global_key, finding_key)
+      def find_data_for_triggered(global_key, finding_key)
         find(global_key, finding_key)
       end
 
-      def find2(global_key, finding_key)
+      def expose_methods(global_key, finding_key)
         find(global_key, finding_key)
       end
 
-      def find3(global_key, finding_key)
+      def data_for_check_result(global_key, finding_key)
         find(global_key, finding_key)
-      end
-
-      def find(global_key, finding_key)
-        result = @db.hget(global_key, finding_key)
-        # byebug
-        Marshal.load(result) unless result.nil?
       end
 
       def delete(service_name)
@@ -57,6 +52,15 @@ module LightningModule
       end
 
       private
+
+      def find(global_key, finding_key)
+        result = @db.hget(global_key, finding_key)
+        Marshal.load(result) unless result.nil?
+      end
+
+      def service_names(service, key)
+        @db.sadd(service, key)
+      end
 
       def add_to_db(key, values)
         @db.hmset(key, values.map.with_index { |val, ind| (ind.even? ? val : Marshal.dump(val)) })

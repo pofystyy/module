@@ -23,7 +23,7 @@ module ClassMethods
       @event_data = [] if @event_data.nil?
       @event_data.push(event)
       parse_event_data
-      data = storage.on_broadcast("broadcast.#{@service_name}.#{current_service_name}.#{@event_name}", @event_name)
+      data = storage.find_data_for_broadcast("broadcast.#{@service_name}.#{current_service_name}.#{@event_name}", @event_name)
       self.new.send(@method, data)
     end
 
@@ -33,11 +33,13 @@ module ClassMethods
 
     def on_triggered(data)
       service_name, method = data.split('.')
-      result = storage.on_triggered("trigger.#{data}", method)
-      result.is_a?(Array) ? (result, from = result) : (from = storage.on_triggered("trigger.#{data}", 'from'))
+      p result = storage.find_data_for_triggered("trigger.#{data}", method)
+      result.is_a?(Array) ? (result, from = result) : (from = storage.find_data_for_triggered("trigger.#{data}", 'from'))
+      p result
+      p from
       response = self.new.send(method, result)
       storage.delete("trigger.#{data}")
-      storage.trigger("trigger.#{from}.#{service_name}", 'response', response) if from
+      storage.add("trigger.#{from}.#{service_name}", 'response', response) if from
     end
 
     private

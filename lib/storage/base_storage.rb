@@ -24,6 +24,9 @@ module LightningModule
       def insert_service_data(key, *values)
         raise NotImplementedError
       end
+
+      def delete(service_name)
+      end
     end
   end
 end
