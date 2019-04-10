@@ -25,12 +25,21 @@ module InstanceMethods
 
   def trigger(address, data)
     service_name, method = address.split('.')
-    if (storage.expose_methods("service.#{service_name}", 'methods').map(&:to_s).include?(method) rescue true)
-      storage.insert("trigger.#{address}", 'from', this_service_name, method, data, 'response', '')
-      check_data_from_db(service_name)
-    else
-      return "method #{method} in service #{service_name} not found"
-      # raise Exceptions::MethodNameFailure
+    storage.insert("trigger.#{address}", 'from', this_service_name, method, data)
+    service_not_found = true
+    while service_not_found
+      sleep 1
+      methods = storage.expose_methods("service.#{service_name}", 'methods')
+      if methods.is_a?(Array)
+        if methods.map(&:to_s).include?(method)
+          service_not_found = false
+          return check_data_from_db(service_name)
+        else
+          service_not_found = false
+          storage.destroy("trigger.#{address}") 
+          return "method #{method} in service #{service_name} not found"
+        end
+      end
     end
   end
 

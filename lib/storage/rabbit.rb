@@ -38,12 +38,16 @@ module LightningModule
 
       def expose_methods(global_key, finding_key = nil)
         bunny_connect_subscribe(global_key)
-        eval(o.sub('}{', '}|{').split('|').uniq.join)[finding_key] rescue ''
+        eval(@output.join.sub('}{', '}|{').split('|').uniq.join)[finding_key] rescue ''
       end
 
       def data_for_check_result(global_key, finding_key = nil)
         bunny_connect_subscribe(global_key)
-        eval(@output.join)[finding_key] rescue ''
+        eval(@output.join.sub('}{', '}|{').split('|').uniq.join)[finding_key] rescue ''
+      end
+
+      def destroy(service_name)
+        bunny_connect_subscribe(service_name)
       end
 
       private
@@ -80,6 +84,7 @@ module LightningModule
           @output << payload
         end
         # channel.queue_delete(queue='queue_name')
+        # channel.queue_delete(queue=)
         @connection.close
       end
     end

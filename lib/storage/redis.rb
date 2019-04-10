@@ -43,6 +43,10 @@ module LightningModule
         find(global_key, finding_key)
       end
 
+      def destroy(service_name)
+        @db.del(service_name)        
+      end
+
       def delete(service_name)
         @db.del(service_name)
       end

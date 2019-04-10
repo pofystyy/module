@@ -35,8 +35,6 @@ module ClassMethods
       service_name, method = data.split('.')
       result = storage.find_data_for_triggered("trigger.#{data}", method)
       result.is_a?(Array) ? (result, from = result) : (from = storage.find_data_for_triggered("trigger.#{data}", 'from'))
-      # p result
-      # p from
       response = self.new.send(method, result)
       storage.delete("trigger.#{data}")
       storage.insert("trigger.#{from}.#{service_name}", 'response', response) if from
