@@ -33,17 +33,17 @@ module LightningModule
       def find_data_for_triggered(global_key, finding_key)
         bunny_connect_subscribe(global_key)
         data = eval(@output.join) rescue ''
-        [data[finding_key], data['from']] rescue ''
+        [data_for_main_object(finding_key), data_for_main_object('from')] rescue ''
       end
 
       def expose_methods(global_key, finding_key = nil)
         bunny_connect_subscribe(global_key)
-        eval(@output.join.sub('}{', '}|{').split('|').uniq.join)[finding_key] rescue ''
+        data_for_main_object(finding_key)
       end
 
       def data_for_check_result(global_key, finding_key = nil)
         bunny_connect_subscribe(global_key)
-        eval(@output.join.sub('}{', '}|{').split('|').uniq.join)[finding_key] rescue ''
+        data_for_main_object(finding_key)
       end
 
       def destroy(service_name)
@@ -63,6 +63,10 @@ module LightningModule
 
       def service_name_queue(key)
         bunny_connect_publish('service', key)
+      end
+
+      def data_for_main_object(finding_key)
+        eval(@output.join.gsub('}{', '}|{').split('|').uniq.join)[finding_key] rescue ''
       end
 
       def bunny_connect_publish(queue_name, values)

@@ -44,11 +44,11 @@ module LightningModule
       end
 
       def destroy(service_name)
-        @db.del(service_name)        
+        remove(service_name)       
       end
 
       def delete(service_name)
-        @db.del(service_name)
+        remove(service_name)
       end
 
       private
@@ -64,6 +64,10 @@ module LightningModule
 
       def add_to_db(key, values)
         @db.hmset(key, values.map.with_index { |val, ind| (ind.even? ? val : Marshal.dump(val)) })
+      end
+
+      def remove(service_name)
+        @db.del(service_name)
       end
     end
   end
