@@ -73,7 +73,7 @@ module LightningModule
         @connection.start
         channel  = @connection.create_channel
         exchange = channel.direct("lightning_module", :auto_delete => true)
-        queue = channel.queue(queue_name, :auto_delete => true, :durable => true).bind(exchange, :routing_key => queue_name)
+        queue = channel.queue(queue_name, :durable => true).bind(exchange, :routing_key => queue_name)
         exchange.publish("#{values}", :routing_key => queue.name)
         @connection.close
       end
@@ -83,7 +83,7 @@ module LightningModule
         @connection.start
         channel  = @connection.create_channel
         exchange = channel.direct("lightning_module", :auto_delete => true)
-        queue = channel.queue(queue_name, :auto_delete => true, :durable => true).bind(exchange, :routing_key => queue_name)
+        queue = channel.queue(queue_name, :durable => true).bind(exchange, :routing_key => queue_name)
         queue.subscribe do |delivery_info, metadata, payload|
           @output << payload
         end

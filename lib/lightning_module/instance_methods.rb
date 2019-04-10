@@ -28,7 +28,6 @@ module InstanceMethods
     storage.insert("trigger.#{address}", 'from', this_service_name, method, data)
     service_not_found = true
     while service_not_found
-      sleep 1
       methods = storage.expose_methods("service.#{service_name}", 'methods')
       if methods.is_a?(Array)
         if methods.map(&:to_s).include?(method)
@@ -53,14 +52,13 @@ module InstanceMethods
     output = ''
     while output.to_s.empty?
       output = check_result("trigger.#{this_service_name}.#{service_name}")
-      sleep 0.3
     end
     return output
   end
 
   def check_result(global_key)
     output = storage.data_for_check_result(global_key, 'response')
-    storage.delete(global_key) if output #&& !output.empty?
+    storage.delete(global_key)
     output
   end
 end
