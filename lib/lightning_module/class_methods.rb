@@ -51,7 +51,7 @@ module ClassMethods
     end
 
     def storage_insert
-      storage.insert_service_data("service.#{current_service_name}", 'class', @service_data[:class].to_s, 'methods', @service_data[:methods])
+      storage.insert_service_data("service.#{current_service_name}", 'methods', @service_data[:methods])
     end
 
     def parse_event_data
