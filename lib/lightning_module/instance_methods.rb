@@ -12,14 +12,15 @@ module InstanceMethods
   include LightningModule::ConnectToDb
   # include LightningModule::ConfConf
 
-  def broadcast(name, data)
-    services = storage.find_all('service')
-    services = services - ["service.#{this_service_name}"]
+  def broadcast(event_name, event_data)
+    services = storage.find_all('service') - ["service.#{this_service_name}"]
     unless services.first.nil?
       services = services.map { |service_n| service_n.scan(/\w+$/) }
-      services.each { |service_n| storage.insert("broadcast.#{this_service_name}.#{service_n.join}.#{name.to_s}",
-                                                  name.to_s,
-                                                  data) } unless services.flatten.empty?
+      services.each { |service_n| storage.broadcast("broadcast.#{this_service_name}.#{service_n.join}.#{event_name.to_s}",
+                                                  event_name.to_s,
+                                                  event_data)
+                                                } unless services.flatten.empty?
+
     end
   end
 
@@ -35,7 +36,7 @@ module InstanceMethods
           return check_data_from_db(service_name)
         else
           service_not_found = false
-          storage.destroy("trigger.#{address}") 
+          storage.destroy("trigger.#{address}")
           return "method #{method} in service #{service_name} not found"
         end
       end
@@ -51,6 +52,7 @@ module InstanceMethods
   def check_data_from_db(service_name)
     output = ''
     while output.to_s.empty?
+      sleep 0.3
       output = check_result("trigger.#{this_service_name}.#{service_name}")
     end
     return output

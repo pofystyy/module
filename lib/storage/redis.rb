@@ -44,11 +44,15 @@ module LightningModule
       end
 
       def destroy(service_name)
-        remove(service_name)       
+        remove(service_name)
       end
 
       def delete(service_name)
         remove(service_name)
+      end
+
+      def broadcast(key, *values)
+        add_to_db(key, values)
       end
 
       private

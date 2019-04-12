@@ -13,7 +13,8 @@ module LightningModule
       end
 
       def find_data_for_broadcast(service_name, event_name)
-        eval(find(service_name).uniq.join)[event_name] rescue ''
+        bunny_connect_subscribe_fanout(service_name)
+        @output.join[event_name] rescue ''
       end
 
       def insert_service_data(key, *values)
@@ -32,7 +33,7 @@ module LightningModule
 
       def find_data_for_triggered(global_key, finding_key)
         bunny_connect_subscribe(global_key)
-        data = eval(@output.join) rescue ''
+        data = data_for_main_object(@output) rescue ''
         [data_for_main_object(finding_key), data_for_main_object('from')] rescue ''
       end
 
@@ -48,6 +49,10 @@ module LightningModule
 
       def destroy(service_name)
         bunny_connect_subscribe(service_name)
+      end
+
+      def broadcast(queue_name, *values)
+        bunny_connect_publish_fanout(queue_name, Hash[*values])
       end
 
       private
@@ -69,10 +74,31 @@ module LightningModule
         eval(@output.join.gsub('}{', '}|{').split('|').uniq.join)[finding_key] rescue ''
       end
 
+      def bunny_connect_publish_fanout(queue_name, values)
+        @connection.start
+        channel  = @connection.create_channel
+        exchange = channel.fanout("lightning_module_fanout", :auto_delete => false)
+        queue = channel.queue(queue_name, :durable => true).bind(exchange, :routing_key => queue_name)
+        exchange.publish("#{values}", :routing_key => queue.name)
+        @connection.close
+      end
+
+      def bunny_connect_subscribe_fanout(queue_name)
+        @output = []
+        @connection.start
+        channel  = @connection.create_channel
+        exchange = channel.fanout("lightning_module_fanout", :auto_delete => false)
+        queue = channel.queue(queue_name, :durable => true).bind(exchange, :routing_key => queue_name)
+        queue.subscribe do |delivery_info, metadata, payload|
+          @output << payload
+        end
+        @connection.close
+      end
+
       def bunny_connect_publish(queue_name, values)
         @connection.start
         channel  = @connection.create_channel
-        exchange = channel.direct("lightning_module", :auto_delete => true)
+        exchange = channel.direct("lightning_module", :auto_delete => false)
         queue = channel.queue(queue_name, :durable => true).bind(exchange, :routing_key => queue_name)
         exchange.publish("#{values}", :routing_key => queue.name)
         @connection.close
@@ -82,13 +108,11 @@ module LightningModule
         @output = []
         @connection.start
         channel  = @connection.create_channel
-        exchange = channel.direct("lightning_module", :auto_delete => true)
+        exchange = channel.direct("lightning_module", :auto_delete => false)
         queue = channel.queue(queue_name, :durable => true).bind(exchange, :routing_key => queue_name)
         queue.subscribe do |delivery_info, metadata, payload|
           @output << payload
         end
-        # channel.queue_delete(queue='queue_name')
-        # channel.queue_delete(queue=)
         @connection.close
       end
     end
