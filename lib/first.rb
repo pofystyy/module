@@ -22,7 +22,7 @@ class First
   end
 
   def trigger_test_service
-    p trigger("test_second_service.test_response", { kbkj: 2 })
+    p trigger("test_second_service.test_response", { data: 2 })
   end
 
   # def trigger_test_service2
