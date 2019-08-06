@@ -1,4 +1,5 @@
 require_relative 'base_storage'
+require_relative '../lightning_module/config_load'
 require 'singleton'
 require 'redis'
 require 'byebug'
@@ -9,7 +10,17 @@ module LightningModule
       include Singleton
 
       def initialize
-        @db = ::Redis.new
+        host = if LightningModule::ConfigLoad.config['host'].nil?
+          "127.0.0.1"
+        else
+          LightningModule::ConfigLoad.config['host'].join
+        end
+        port = if LightningModule::ConfigLoad.config['port'].nil?
+          6379
+        else
+          LightningModule::ConfigLoad.config['port'].join
+        end
+        @db = ::Redis.new(host: host, port: port)
       end
 
       def find_data_for_broadcast(service_name, event_name)

@@ -1,3 +1,5 @@
 db:
 # - rabbit
 - redis
+host:
+  - localhost
